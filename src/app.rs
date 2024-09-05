@@ -22,10 +22,13 @@ impl MyApp {
             // 如果获取成功, 则使用存储的数据初始化实例, 否则使用默认值
             data = eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
         }
+        // 字体设置
+        Self::load_fonts(&cc.egui_ctx);
         // 设置删除索引为 -1, 表示没有待删除的项目
         data.del = -1;
         data
     }
+
     // 用于根据单选按钮的状态显示待办事项列表
     fn show_content(&mut self, ui: &mut eframe::egui::Ui) {
         match self.radio {
@@ -53,7 +56,7 @@ impl MyApp {
             }
         } else {
             // 如果列表为空, 则显示提示信息
-            ui.label("list is empty");
+            ui.label("暂无任务");
         }
     }
     // 根据完成状态显示任务
@@ -78,10 +81,10 @@ impl MyApp {
             // 如果没有匹配的任务, 则显示提示信息
             if active {
                 // 已完成的任务
-                ui.label("completed is empty");
+                ui.label("已完成的任务为空");
             } else {
                 // 待办的任务
-                ui.label("active is empty");
+                ui.label("待办的任务为空");
             }
         }
     }
@@ -104,6 +107,27 @@ impl MyApp {
             self.del = -1;
         }
     }
+
+    // 字体设置
+    pub fn load_fonts(ctx: &eframe::egui::Context) {
+        let mut fonts = eframe::egui::FontDefinitions::default();
+        fonts.font_data.insert(
+            "my_font".to_owned(),
+            eframe::egui::FontData::from_static(include_bytes!("fonts/SIMFANG.TTF")),
+        );
+        fonts
+            .families
+            .entry(eframe::egui::FontFamily::Proportional)
+            .or_default()
+            .insert(0, "my_font".to_owned());
+
+        fonts
+            .families
+            .entry(eframe::egui::FontFamily::Monospace)
+            .or_default()
+            .push("my_font".to_owned());
+        ctx.set_fonts(fonts);
+    }
 }
 
 impl eframe::App for MyApp {
@@ -111,10 +135,10 @@ impl eframe::App for MyApp {
         // 创建一个中央面板并显示 UI 布局
         eframe::egui::CentralPanel::default().show(ctx, |ui| {
             // 设置标题
-            ui.heading("Todo List");
+            ui.heading("待办事项列表");
             // 创建一个文本编辑框, 允许用户输入新的待办事项, 提示文本为 "Add todo"
             let p =
-                ui.add(eframe::egui::TextEdit::singleline(&mut self.addtodo).hint_text("Add todo"));
+                ui.add(eframe::egui::TextEdit::singleline(&mut self.addtodo).hint_text("添加任务"));
             // 如果文本编辑框失去焦点并且用户没有点击其他地方, 则处理添加待办事项
             if p.lost_focus() & !p.clicked_elsewhere() {
                 // 如果输入框中有文本, 则创建一个新的 TodoItem 实例并添加到 data 列表中
@@ -133,13 +157,13 @@ impl eframe::App for MyApp {
                 // 任务数量
                 ui.label(&self.task.to_string());
                 // 提示文本
-                ui.label("task left");
+                ui.label("项任务待办");
                 // 分隔
                 ui.add_space(44.0);
                 // 单选按钮
-                ui.selectable_value(&mut self.radio, Enum::All, "All");
-                ui.selectable_value(&mut self.radio, Enum::Active, "active");
-                ui.selectable_value(&mut self.radio, Enum::Completed, "completed");
+                ui.selectable_value(&mut self.radio, Enum::All, "所有");
+                ui.selectable_value(&mut self.radio, Enum::Active, "待办");
+                ui.selectable_value(&mut self.radio, Enum::Completed, "完结");
             });
             // 分隔
             ui.add_space(11.0);

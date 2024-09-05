@@ -27,7 +27,7 @@ impl TodoItem {
                 // 请求文本编辑框获得焦点
                 respon.request_focus();
                 // 如果编辑状态下点击了 "X" 按钮, 标记 `change` 为 `true` 表示有更改发生
-                if ui.button("X").clicked() {
+                if ui.button("删除").clicked() {
                     change = true;
                 }
                 // 如果文本编辑框失去焦点或者点击了其他地方, 退出编辑状态

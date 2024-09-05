@@ -15,3 +15,4 @@ fn main() {
         Box::new(|cc: &eframe::CreationContext<'_>| Ok(Box::new(app::MyApp::new(cc)))),
     );
 }
+
