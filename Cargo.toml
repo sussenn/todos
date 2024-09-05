@@ -1,0 +1,9 @@
+[package]
+name = "todos"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# persistence 开启持久化
+eframe = {version = "0.28.0", features = ["persistence"]}
+serde = {version = "1.0", features = ["derive"]}
